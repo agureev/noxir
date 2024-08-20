@@ -307,6 +307,20 @@ defmodule Noxir do
     eval_b_at_a = [a | b] |> nock
     variable_and_old_body = [eval_b_at_a | a]
 
+    # The canonical way to present variable assignment of subject subj
+    # to a nount n is to have them as a cell [subj n]
+
+    # For example, assignment of subject [1 2] to 0 is [0 [1 2]]
+
+    # [a 8 b c] mean "assign to a the value of *[a b] and use c on it"
+
+    # if a variable does not need to use the subjects, then b will be
+    # of form [1 n] where n is the value to be assigned
+
+    # the point in evaluating against the subject is that the variable
+    # "name" to be assigned can be used as in usual "a = a + 1" type
+    # assignment
+
     [variable_and_old_body | c] |> nock()
   end
 
