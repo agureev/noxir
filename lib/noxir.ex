@@ -2,7 +2,42 @@ defmodule Noxir do
   @moduledoc """
   I am a basic Nock interpreter with comments for educational use.
 
-  Knowledge assumed:
+  Below you can find some docs and comments regarding what each of the
+  nock flags 0-11 do.
+
+  ## General Notes:
+
+  ### Subject
+  Do not think of the subject in [subject formula] as an
+  actual input to a function, as you will not encounter usual
+  name-allocation for that. It will only make your life harder.
+
+  Instead think of subject as a context in type theory or as a stack.
+
+  Things get added to the stack and you can make some operation with
+  them once they are availiable. As in type theory, these are not
+  exactly always something that you will use for your results or
+  function applications, but they will be availiable. Similarly your
+  variable declarations will not be named, they will instead just be a
+  value in a context.
+
+  ### Recursion
+
+  Basic recursion on one natural number can be made sense if you start
+  designing it with starting the formula as:
+
+  [
+    [
+      body_of_recursion (for example an 'if' statement)
+      [initial_val user_input]
+    ]
+    loop_implementation (probably a 9 statement)
+  ]
+
+  From this, you can start thinking about implementing a recursive
+  function.
+
+  ## Knowledge assumed
   Binary Trees (index combinatorics)
   Basic Elixir Syntax (pattern-matching, typespec)
   """
