@@ -338,35 +338,83 @@ defmodule Noxir do
     [eval_b_at_a | c] |> nock()
   end
 
-  def nock([a | [8 | [b | c]]]) do
+  def nock([a | [8 | [b = formula_to_get_assignment | c]]]) do
     eval_b_at_a = [a | b] |> nock
     variable_and_old_body = [eval_b_at_a | a]
 
-    # The canonical way to present variable assignment of subject subj
-    # to a nount n is to have them as a cell [subj n]
+    # The canonical way to have an assignment is just adding a new
+    # value to the subject. So if subject was a not we have
+    # [new_var a]
 
-    # For example, assignment of subject [1 2] to 0 is [0 [1 2]]
+    # For example, setting a new variable equal to 0 to a subject with
+    # [1 2] is [0 [1 2]]
 
-    # [a 8 b c] mean "assign to a the value of *[a b] and use c on it"
+    # [a 8 b c] mean "add a value of *[a b] to the context and use c
+    # on it"
 
     # if a variable does not need to use the subjects, then b will be
     # of form [1 n] where n is the value to be assigned
 
     # the point in evaluating against the subject is that the variable
-    # "name" to be assigned can be used as in usual "a = a + 1" type
-    # assignment
+    # to be pushed may use the stack to generate new asisgnment as in
+    # a = a + 1
+
+
+    # read [a [8 [1 n] formula]] as "push n to the stack" and then
+    # execute g
+
+    # read [8 [1 n]] as "push n to the stack"
+
+    # read [8 fun] as "push a function to the stack" after evaluating in
+    # at the current stack
 
     [variable_and_old_body | c] |> nock()
   end
 
-  def nock([a | [9 | [b | c]]]) do
+  def nock([a = core | [9 | [b = index_of_formula_in_core | c = what_to_do_with_core]]]) do
     # *[a c] 2 [0 1] 0 b
     eval_c_at_a = [a | c] |> nock()
 
+    # pick_top = do nothing to the core
     pick_top = [0 | 1]
     pick_at_b = [0 | b]
 
-    # equivalent to *[*[a c] [*[a c] 0 b]]
+    # Core is just a cell whose tail is data (possibly containing other
+    # cores) and whose head is code (containing one or more formulas)
+
+    # The lingo is: [battery payload] or [bat pay]
+    # a formula inside a core is called an arm
+
+    # The canonical way to use a core: pick a formula out of the battery
+    # then use the formula on the entire core, i.e. [[bat pay] \[n bat]]
+
+    # 9 is used to efficiently use cores
+    # b here is the position of the formuala we wont to use in the core
+    # a
+
+    # The point is not that the core OUGHT to be the subject, it is that
+    # we usually want to keep it around as a stash to our formular and
+    # "pre-compiled" data. So we might alter it also using formula c
+
+    # So if we want to operate solely on the core with formula of index
+    # n in bat we do [[bat pay] 9 2n [0 1]]
+
+    # what happens if we want to loop on natural numbers, e.g.?
+    # for loops on natural numbers we need some current value on which
+    # we loop val ,the input in and some function which tests what to
+    # do on current val with given input
+
+    # in this case a = [formula [val input]]
+    # where formula will also be a 9 statement
+    # that will change the val
+    # 9 2 0 1 = keep the context unchanged and take its left branch as
+    # the formula to be evaluated against the context
+
+    # when the loop goes up, you usually change [0 1] into a function
+    # which changes the changes the context you operate on. if we are
+    # recursing on atoms, this usually increments the elemnt by 1
+
+    # equivalent to *[*[a c] *[*[a c] 0 b]]
     [eval_c_at_a | [2 | [pick_top | pick_at_b]]] |> nock()
   end
 
